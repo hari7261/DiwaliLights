@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Diwali Celebration</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Neon Glow Text */
+    .neon-glow {
+      text-shadow: 0 0 10px #ff6600, 0 0 20px #ff6600, 0 0 30px #ff6600, 0 0 40px #ff3300;
+      animation: neonGlow 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes neonGlow {
+      0% { text-shadow: 0 0 10px #ff6600, 0 0 20px #ff6600, 0 0 30px #ff6600, 0 0 40px #ff3300; }
+      100% { text-shadow: 0 0 20px #ffcc00, 0 0 30px #ffcc00, 0 0 40px #ff3300, 0 0 50px #ff3300; }
+    }
+
+    /* Background Gradient */
+    .bg-live-gradient {
+      background: linear-gradient(45deg, #ff6600, #ffcc00, #ff3300, #ffcc00, #ff6600);
+      background-size: 300% 300%;
+      animation: animateGradient 6s linear infinite;
+    }
+    @keyframes animateGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating Lanterns, Diyas, and Stars */
+    .lantern, .diya {
+      position: absolute;
+      background: radial-gradient(circle at 20px 20px, #ff6600, #ff3300);
+      animation: floatUp linear infinite;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-150vh); }
+    }
+
+    /* Stars and Sparkles */
+    .star, .sparkle {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 1.5s infinite alternate ease-in-out;
+    }
+    .sparkle { width: 3px; height: 3px; opacity: 0.6; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Fireworks Canvas */
+    #fireworks {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Responsive Font Sizes */
+    h1 { font-size: 2rem; }
+    p { font-size: 1rem; }
+
+    @media (min-width: 768px) {
+      h1 { font-size: 4rem; }
+      p { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body class="bg-live-gradient text-white font-sans overflow-hidden">
+  <div class="container mx-auto py-20 px-4 text-center">
+    <h1 class="text-5xl font-bold neon-glow">Happy Diwali!</h1>
+    <p class="text-2xl mt-4">May the festival of lights bring joy, prosperity, and endless happiness to you and your loved ones. Celebrate with light, laughter, and love!</p>
+  </div>
+
+  <!-- Floating Lanterns, Diyas, and Stars -->
+  <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+    <div class="lantern" style="left: 10%; animation-duration: 6s;"></div>
+    <div class="lantern" style="left: 30%; animation-duration: 8s;"></div>
+    <div class="lantern" style="left: 50%; animation-duration: 7s;"></div>
+    <div class="lantern" style="left: 70%; animation-duration: 9s;"></div>
+    <div class="lantern" style="left: 90%; animation-duration: 5s;"></div>
+    
+    <div class="diya" style="left: 15%; bottom: 5%; width: 30px; height: 30px; animation-duration: 8s;"></div>
+    <div class="diya" style="left: 45%; bottom: 10%; width: 30px; height: 30px; animation-duration: 6s;"></div>
+    <div class="diya" style="left: 75%; bottom: 15%; width: 30px; height: 30px; animation-duration: 7s;"></div>
+
+    <div class="star" style="top: 10%; left: 20%; width: 5px; height: 5px;"></div>
+    <div class="star" style="top: 30%; left: 40%; width: 5px; height: 5px;"></div>
+    <div class="sparkle" style="top: 50%; left: 60%;"></div>
+    <div class="sparkle" style="top: 70%; left: 80%;"></div>
+    <div class="sparkle" style="top: 20%; left: 70%;"></div>
+    <div class="sparkle" style="top: 40%; left: 90%;"></div>
+  </div>
+
+  <!-- Fireworks Canvas -->
+  <canvas id="fireworks"></canvas>
+
+  <!-- Background Music -->
+  <audio id="diwaliMusic" autoplay loop>
+    <source src="diwaali.mp3" type="audio/mp3">
+  </audio>
+  
+  <!-- Crackers Sound -->
+  <audio id="crackerSound">
+    <source src="crackers.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    function playCrackerSound() {
+      const sound = document.getElementById("crackerSound");
+      sound.play();
+    }
+
+    function initFireworks() {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 5;
+
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("fireworks"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const fireworkGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+
+      function createFirework() {
+        const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
+        const firework = new THREE.Mesh(fireworkGeometry, material);
+        firework.position.set((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 5, 0);
+        scene.add(firework);
+
+        return {
+          mesh: firework,
+          velocity: {
+            x: (Math.random() - 0.5) * 0.1,
+            y: Math.random() * 0.1 + 0.05,
+            z: (Math.random() - 0.5) * 0.1
+          }
+        };
+      }
+
+      const fireworks = Array.from({ length: 40 }, createFirework);
+
+      function animateFireworks() {
+        requestAnimationFrame(animateFireworks);
+
+        fireworks.forEach((fw) => {
+          fw.mesh.position.x += fw.velocity.x;
+          fw.mesh.position.y += fw.velocity.y;
+          fw.mesh.position.z += fw.velocity.z;
+
+          if (fw.mesh.position.y > 5) {
+            scene.remove(fw.mesh);
+            Object.assign(fw, createFirework());
+          }
+        });
+
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      });
+
+      animateFireworks();
+    }
+
+    // Initialize fireworks and play sound on click
+    initFireworks();
+    document.body.addEventListener("click", () => {
+      playCrackerSound();
+    });
+  </script>
+</body>
+</html>
